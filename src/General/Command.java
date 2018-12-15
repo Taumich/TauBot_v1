@@ -32,6 +32,7 @@ public class Command
 	}
 	
 	public String setRes(int x, int y) { ratio[0]= screen[0]/x; ratio[1]=screen[1]/y; return ratio[0]+" "+ratio[1]; }
+	
 	public Color getColor(int x, int y) { return bot.getPixelColor(x, y); }
 	
 	public String mouseClick(int input) {
@@ -40,54 +41,57 @@ public class Command
 		bot.delay(10);
 		bot.mouseRelease(input);
 		bot.waitForIdle();
+		bot.delay(10);
 		
 		return "mouse clicked";
 	}
 	
-	public String mouseClick(int[] input)
-	{
-		for( int i : input) {
-			bot.mousePress(i);
-			bot.waitForIdle();
-			bot.delay(10);
-			bot.mouseRelease(i);
-			bot.waitForIdle();
-			bot.delay(10);
-		}
+	public String mouseClick(char input) {
+		bot.mousePress(input);
+		bot.waitForIdle();
+		bot.delay(10);
+		bot.mouseRelease(input);
+		bot.waitForIdle();
+		bot.delay(10);
+		
 		return "mouse clicked";
 	}
 	
-	public String keyType(char letter) {
+	public String mouseClick(int input, int reps) {
+		for(int i=0; i < reps; i++) { mouseClick(input); }
+		return "mouse clicked "+reps+" times";
+	}
+	
+	public String type(int letter, double delay) {
 		boolean capital = Character.isUpperCase(letter);
 		if (capital) bot.keyPress(KeyEvent.VK_SHIFT);
 		else letter = Character.toUpperCase(letter);
 		bot.keyPress(letter);
 		bot.waitForIdle();
-		bot.delay(10);
+		bot.delay((int) delay);
 		bot.keyRelease(letter);
 		bot.waitForIdle();
-		bot.delay(10);
+		bot.delay((int) delay);
 		if (capital) bot.keyRelease(KeyEvent.VK_SHIFT);
-		
 		return "Typed: "+letter;
 	}
 	
-	public String keyType(char[] letter)
+	public String type(int letter) { return type(letter, 10.0); };
+	public String type(char letter) { type(letter); return "Typed: "+letter; }
+	public String type(int letter, int reps) { for(int i=0; i < reps; i++) type(letter); return "Typed: "+letter; }
+	
+	public String type(char[] letter)
 	{
-		for( int i : letter) {
-			boolean capital = Character.isUpperCase(i);
-			if (capital) bot.keyPress(KeyEvent.VK_SHIFT);
-			else i = Character.toUpperCase(i);
-			bot.keyPress(i);
-			bot.waitForIdle();
-			bot.delay(10);
-			bot.keyRelease(i);
-			bot.waitForIdle();
-			bot.delay(10);
-			if (capital) bot.keyRelease(KeyEvent.VK_SHIFT);
-			
+		StringBuilder res = new StringBuilder("");
+		for( char i : letter) {
+			res.append(type(i));
 		}
-		return "mouse clicked";
+		return "Typed: "+res.toString();
+	}
+	
+	public String type(String text)
+	{
+		return type(text.toCharArray());
 	}
 	
 	public String mouseMove(int x, int y) {
@@ -120,18 +124,6 @@ public class Command
 		return "mouse moved from ("+initial_loc[0]+","+initial_loc[1]+") to ("+mouseX+","+mouseY+") ";
 	}
 	
-	public String type(String message) {
-		int input = 0;
-		
-		bot.keyPress(input);
-		bot.waitForIdle();
-		bot.delay(10);
-		bot.keyRelease(input);
-		bot.waitForIdle();
-		
-		return "Typed: "+message;
-	}
-	
 	public String paste(String message) {
 		StringSelection stringSelection = new StringSelection(message);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -143,5 +135,10 @@ public class Command
 		bot.keyRelease(KeyEvent.VK_CONTROL);
 		
 		return ("mouse types '"+message+"'");
+	}
+	
+	public String wait(int milliseconds) {
+		bot.delay(milliseconds);
+		return ("Waited for "+milliseconds+" ms");
 	}
 }
