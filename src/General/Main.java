@@ -25,6 +25,7 @@ public class Main
 		log( c.mouseClick(InputEvent.BUTTON2_DOWN_MASK) );
 		log( c.mouseClick(InputEvent.BUTTON2_DOWN_MASK) );
 		log( c.mouseClick(InputEvent.BUTTON2_DOWN_MASK) );
+		log( c.mouseClick('V'));
 	}
 	
 	public static void log(String message) { System.out.println(message); }

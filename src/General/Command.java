@@ -57,6 +57,21 @@ public class Command
 		return "mouse clicked";
 	}
 	
+	public String keyType(char letter) {
+		boolean capital = Character.isUpperCase(letter);
+		if (capital) bot.keyPress(KeyEvent.VK_SHIFT);
+		else letter = Character.toUpperCase(letter);
+		bot.keyPress(letter);
+		bot.waitForIdle();
+		bot.delay(10);
+		bot.keyRelease(letter);
+		bot.waitForIdle();
+		bot.delay(10);
+		if (capital) bot.keyRelease(KeyEvent.VK_SHIFT);
+		
+		return "Typed: "+letter;
+	}
+	
 	public String keyType(char[] letter)
 	{
 		for( int i : letter) {
@@ -73,17 +88,6 @@ public class Command
 			
 		}
 		return "mouse clicked";
-	}
-	
-	public String keyType(char letter) {
-		Character.toUpperCase(letter);
-		bot.keyPress(letter);
-		bot.waitForIdle();
-		bot.delay(10);
-		bot.keyRelease(letter);
-		bot.waitForIdle();
-		
-		return "Typed: "+letter;
 	}
 	
 	public String mouseMove(int x, int y) {
