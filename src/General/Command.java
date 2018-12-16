@@ -21,23 +21,38 @@ public class Command
 	double 	screen[] = {0,0},
 			ratio[] = {1,1}; //monitor ratio for when screen resolution and cursor location don't match
 	
-	public Command () throws AWTException {
+	public Command() throws AWTException {
 		bot = new Robot();
 		//check screenRange
+		getMouseLoc();
 		bot.mouseMove(10000,10000);
-		bot.waitForIdle();
 		screen[0] = MouseInfo.getPointerInfo().getLocation().getX();
 		screen[1] = MouseInfo.getPointerInfo().getLocation().getY();
-		System.out.println("Screen: "+screen[0]+" "+screen[1]);
+		setRes(1000,1000);
+		System.out.println("Screen: ("+screen[0]+" "+screen[1]+") space: "+screen[0]/ratio[0]+" , "+screen[1]/ratio[1]);
 		bot.mouseMove(mouseX, mouseY);
 	}
 	
-	public String setRes(int x, int y) { ratio[0]= screen[0]/x; ratio[1]=screen[1]/y; return ratio[0]+" "+ratio[1]; }
+	private int[] getMouseLoc() {
+		mouseX = (int) MouseInfo.getPointerInfo().getLocation().getX();
+		mouseY = (int) MouseInfo.getPointerInfo().getLocation().getY();
+		int[] res = {mouseX, mouseY};
+		System.out.println("mouse: "+res[0]+" "+res[1]);
+		return res;
+	}
 	
-	public Color getColor(int x, int y) { return bot.getPixelColor(x, y); }
+	private double[] getMouseLocDouble() {
+		getMouseLoc();
+		double[] res = {MouseInfo.getPointerInfo().getLocation().getX(), MouseInfo.getPointerInfo().getLocation().getY()};
+		return res;
+	}
+	
+	public String setRes (int x, int y) { ratio[0]= screen[0]/x; ratio[1]=screen[1]/y; return ratio[0]+" "+ratio[1]; }
+	
+	public Color getColor (int x, int y) { return bot.getPixelColor(x, y); }
 	
 	//One mouse button click
-	public String mouseClick(int input) {
+	public String mouseClick (int input) {
 		bot.mousePress(input);
 		bot.waitForIdle();
 		bot.delay(10);
@@ -49,13 +64,13 @@ public class Command
 	}
 	
 	//Consecutive mouse button clicks
-	public String mouseClick(int input, int reps) {
+	public String mouseClick (int input, int reps) {
 		for(int i=0; i < reps; i++) { mouseClick(input); }
 		return "mouse clicked "+reps+" times";
 	}
 	
 	//Clicks a special action key that cannot be sent as a character.
-	public String type(int specKey) {
+	public String type (int specKey) {
 		bot.keyPress(specKey);
 		bot.waitForIdle();
 		bot.keyRelease(specKey);
@@ -64,7 +79,7 @@ public class Command
 	}
 	
 	//Clicks a special action key that cannot be sent as a character with a key release delay.
-	public String type(int specKey, int delay) {
+	public String type (int specKey, int delay) {
 		bot.keyPress(specKey);
 		bot.waitForIdle();
 		bot.delay(delay);
@@ -75,7 +90,7 @@ public class Command
 	}
 
 	//types a character with an assigned button release delay
-	public String type(char letter, double delay) {
+	public String type (char letter, double delay) {
 		boolean capital = Character.isUpperCase(letter);
 		if (capital) bot.keyPress(KeyEvent.VK_SHIFT);
 		else letter = Character.toUpperCase(letter);
@@ -90,10 +105,10 @@ public class Command
 	}
 	
 	//repeats a typed key with a random interval
-	public String type(char letter, int reps) { for(int i=0; i < reps; i++) type(letter, 20.0+(Math.random()*10)); return "Typed: "+letter; }
+	public String type (char letter, int reps) { for(int i=0; i < reps; i++) type(letter, 20.0+(Math.random()*10)); return "Typed: "+letter; }
 	
 	//types a sequence of characters with a random interval
-	public String type(char[] letter)
+	public String type (char[] letter)
 	{
 		StringBuilder res = new StringBuilder("");
 		for( char i : letter) {
@@ -109,20 +124,26 @@ public class Command
 	}
 	
 	//Converts mouse from client-side coordinates to screen-space coordinates, sends to teleport mouse method.
-	public String mouseTo(int x, int y) { return mousePort((int) (x*ratio[0]), (int) (y*ratio[1])); }
+	public String mouseTo (int x, int y) { return mousePort((int) (x*ratio[0]), (int) (y*ratio[1])); }
 	
 	//Teleports mouse to screen-space coordinates.
-	private String mousePort(int x, int y) {
+	private String mousePort (int x, int y) {
 		mouseX = x;
 		mouseY = y;
 		bot.mouseMove(mouseX, mouseY);
 		return "mouse teleported to x="+x+" y="+y;
 	}
 	
+	public String mouseAct (int x, int y) {
+		mouseMove(x,y);
+		mouseTo(x,y);
+		mouseClick(InputEvent.BUTTON1_DOWN_MASK);
+		return "Mouse acted to and at "+x+" "+y;
+	}
+	
 	//moves mouse like a human using initial speed and deceleration.
-	public String mouseMove(int x, int y) {
-		double 	initial_loc[] = { 	MouseInfo.getPointerInfo().getLocation().getX(),
-									MouseInfo.getPointerInfo().getLocation().getY() },
+	public String mouseMove (int x, int y) {
+		double 	initial_loc[] = getMouseLocDouble(),
 				target_loc[] = {	x*ratio[0], y*ratio[1] },
 				diff[] = {			target_loc[0] - initial_loc[0], target_loc[1] - initial_loc[1] };
 		
@@ -150,7 +171,7 @@ public class Command
 		return "mouse moved from ("+initial_loc[0]+","+initial_loc[1]+") to ("+mouseX+","+mouseY+") ";
 	}
 	
-	public String paste(String message) {
+	public String paste (String message) {
 		StringSelection stringSelection = new StringSelection(message);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clipboard.setContents(stringSelection, stringSelection);
@@ -168,36 +189,49 @@ public class Command
 		return ("Waited for "+milliseconds+" ms");
 	}
 	
-	public boolean openApp(String appName) {
-		Color colScan = getColor(5, 90);
-		System.out.println("color before: "+colScan);
+	//full command chain that allows the pc to open an app acting like a human
+	public boolean openApp (String appName) {
+		int coords[] = {0,1000};
+		Color colScan = getColor(coords[0], coords[1]);
+		mouseMove(0,1000);
 		type(KeyEvent.VK_WINDOWS);
-		wait(2000);
-		for (int i=0; i < 3 && colScan == getColor(5, 90); i++)
+		wait(1000);
+		for (int i=0; i < 3 && colScan == getColor(coords[0], coords[1]); i++)
 			wait(1000);
-		System.out.println("color after: "+getColor(5, 90));
-		if(colScan == getColor(5, 90)) {
+		if(colScan != getColor(coords[0], coords[1])) {
 			paste(appName);
+			wait(1000);
 			type(KeyEvent.VK_ENTER);
 			return true;
 		}
 		return false;
 	}
 	
-	public String pixelScan(int milliseconds, int reps) {
-		Color colScan = getColor(5, 90);
+	public String pixelScan (int milliseconds, int reps) {
+		Color colScan = getColor(0, 0);
 		int[] cursor = new int[2];
 		StringBuilder s = new StringBuilder("");
 		for(int i=0; i < reps; i++) {
-		wait(milliseconds);
-		cursor[0] = (int) MouseInfo.getPointerInfo().getLocation().getX();
-		cursor[1] = (int) MouseInfo.getPointerInfo().getLocation().getY();
-		mouseTo(50,50);
-		wait(500);
-		mouseTo(cursor[0], cursor[1]);
-		s.append("col=").append(colScan).append(" mX=").append(cursor[0]).append(" mY=").append(cursor[1]).append("\n");
-		
+			wait(milliseconds);
+			cursor = getMouseLoc();
+			mouseTo(0,0);
+			colScan = getColor(cursor[0], cursor[1]);
+			wait(100);
+			mousePort(cursor[0], cursor[1]);
+			s.append("col=").append(colScan).append(" mX=").append(cursor[0]/ratio[0])
+				.append(" mY=").append(cursor[1]/ratio[1]).append("\n");
 		}
 		return s.toString();
+	}
+	
+	public String pixelScan (int milliseconds, int x, int y) {
+		int mX = (int) (x*ratio[0]);
+		int mY = (int) (y*ratio[1]);
+		Color colScan = getColor(mX, mY);
+		wait(milliseconds);
+		colScan = getColor(mX, mY);
+		wait(100);
+		mousePort(mX, mY);
+		return "col="+colScan+" mX="+x+" mY="+y;
 	}
 }
