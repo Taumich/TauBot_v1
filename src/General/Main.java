@@ -19,25 +19,15 @@ public class Main
 		catch (AWTException e) { e.printStackTrace(); }
 		c.setRes(100, 100);
 		
-		gwBot(c);
+		log( "gwBot completed = "+gwBot(c) );
 	}
 	
-	public static void gwBot(Command c) {
-		Color winScan = c.getColor(5, 90);
-		log( c.mouseMove(10,90) );
-		log( c.mouseMove(0,100) );
-		log( c.mouseClick(InputEvent.BUTTON1_DOWN_MASK) );
-		log( c.wait(500) );
-		
-		if(winScan == c.getColor(5, 90)) log( c.mouseClick(InputEvent.BUTTON1_DOWN_MASK) );
-		for (int i=0; (i < 3) && (winScan == c.getColor(5, 90)); i++) log( c.wait(1000) +(winScan == c.getColor(25, 25)));
-		log( c.paste("Guild Wars 2") );
-		log( c.wait(1000) );
-		
-		log( c.type(KeyEvent.VK_ENTER));
-		log( c.wait(1000) );
-		
+	public static boolean gwBot(Command c) {
 		Color colScan = c.getColor(48, 50);
+		boolean openSuccess = c.openApp("Guild Wars 2");
+		if(!openSuccess)
+			return false;
+		colScan = c.getColor(48, 50);
 		for (int i=0; (i < 5) && colScan.equals(c.getColor(48, 50)); i++) log( c.wait(1000) + colScan.equals(c.getColor(48, 50)));
 		colScan = c.getColor(48, 50);
 		for (int i=0; (i < 5) && colScan.equals(c.getColor(48, 50)); i++) log( c.wait(1000) + colScan.equals(c.getColor(48, 50)));
@@ -78,6 +68,7 @@ public class Main
 		log( c.type('V'));
 		log( c.wait(4000) );
 		log( c.type(KeyEvent.VK_LEFT,5));
+		return true;
 	}
 	
 	public static void log(String message) { System.out.println(message); }
