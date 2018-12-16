@@ -77,7 +77,21 @@ public class Command
 	}
 	
 	public String type(int letter) { return type(letter, 10.0); };
-	public String type(char letter) { type(letter); return "Typed: "+letter; }
+
+	public String type(char letter, double delay) {
+		boolean capital = Character.isUpperCase(letter);
+		if (capital) bot.keyPress(KeyEvent.VK_SHIFT);
+		else letter = Character.toUpperCase(letter);
+		bot.keyPress(letter);
+		bot.waitForIdle();
+		bot.delay((int) delay);
+		bot.keyRelease(letter);
+		bot.waitForIdle();
+		bot.delay((int) delay);
+		if (capital) bot.keyRelease(KeyEvent.VK_SHIFT);
+		return "Typed: "+letter;
+	}
+	
 	public String type(int letter, int reps) { for(int i=0; i < reps; i++) type(letter); return "Typed: "+letter; }
 	
 	public String type(char[] letter)
