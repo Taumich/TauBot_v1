@@ -2,14 +2,17 @@ package General;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Command 
@@ -21,6 +24,8 @@ public class Command
 	double 	screen[] = {0,0},
 			ratio[] = {1,1}; //monitor ratio for when screen resolution and cursor location don't match
 	
+	Rectangle screenRect;
+	
 	public Command() throws AWTException {
 		bot = new Robot();
 		//check screenRange
@@ -31,6 +36,9 @@ public class Command
 		setRes(1000,1000);
 		System.out.println("Screen: ("+screen[0]+" "+screen[1]+") space: "+screen[0]/ratio[0]+" , "+screen[1]/ratio[1]);
 		bot.mouseMove(mouseX, mouseY);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		screenRect = new Rectangle(screenSize);
 	}
 	
 	private int[] getMouseLoc() {
@@ -49,7 +57,16 @@ public class Command
 	
 	public String setRes (int x, int y) { ratio[0]= screen[0]/x; ratio[1]=screen[1]/y; return ratio[0]+" "+ratio[1]; }
 	
-	public Color getColor (int x, int y) { return bot.getPixelColor(x, y); }
+	//public Color getColor (int x, int y) { return bot.getPixelColor(x, y); }
+	
+	public Color getColor (int x, int y) {
+		Rectangle bounds = new Rectangle(x, y, 1, 1);
+		BufferedImage img = bot.createScreenCapture(bounds);
+		int clr = img.getRGB(0,0);
+		return new Color(clr);
+	}//*/
+
+//Click tools
 	
 	//One mouse button click
 	public String mouseClick (int input) {
@@ -68,6 +85,8 @@ public class Command
 		for(int i=0; i < reps; i++) { mouseClick(input); }
 		return "mouse clicked "+reps+" times";
 	}
+
+//Type Tools
 	
 	//Clicks a special action key that cannot be sent as a character.
 	public String type (int specKey) {
@@ -122,6 +141,8 @@ public class Command
 	{
 		return type(text.toCharArray());
 	}
+	
+//Mouse Tools
 	
 	//Converts mouse from client-side coordinates to screen-space coordinates, sends to teleport mouse method.
 	public String mouseTo (int x, int y) { return mousePort((int) (x*ratio[0]), (int) (y*ratio[1])); }
@@ -189,6 +210,8 @@ public class Command
 		return ("Waited for "+milliseconds+" ms");
 	}
 	
+//Window/app Tools
+	
 	//full command chain that allows the pc to open an app acting like a human
 	public boolean openApp (String appName) {
 		int coords[] = {0,1000};
@@ -207,6 +230,14 @@ public class Command
 		return false;
 	}
 	
+	public boolean closeWindow() {
+		Color colScan = getColor(500, 500);
+		mouseAct(950,2);
+		return colorCompare(colScan,getColor(500, 500));
+	}
+	
+//Scan Tools
+	
 	public String pixelScan (int milliseconds, int reps) {
 		Color colScan = getColor(0, 0);
 		int[] cursor = new int[2];
@@ -217,6 +248,7 @@ public class Command
 			mouseTo(0,0);
 			colScan = getColor(cursor[0], cursor[1]);
 			wait(100);
+			System.out.println( "The Color = "+colRecComp(3,3,cursor[0], cursor[1]) );
 			mousePort(cursor[0], cursor[1]);
 			s.append("col=").append(colScan).append(" mX=").append(cursor[0]/ratio[0])
 				.append(" mY=").append(cursor[1]/ratio[1]).append("\n");
@@ -231,7 +263,56 @@ public class Command
 		wait(milliseconds);
 		colScan = getColor(mX, mY);
 		wait(100);
+		System.out.println( "The Color = "+colRecComp(3,3,x,y) );
 		mousePort(mX, mY);
 		return "col="+colScan+" mX="+x+" mY="+y;
+	}
+	//BufferedImage image = bot.createScreenCapture(screenRect);
+//Buffered Screen Image Tools
+	
+	public int colRecComp (int height, int width, int x, int y)
+	{
+		BufferedImage image = bot.createScreenCapture(screenRect);
+		
+		int clr = image.getRGB(x,y);
+		int  red   = (clr & 0x00ff0000) >> 16;
+		int  green = (clr & 0x0000ff00) >> 8;
+		int  blue  =  clr & 0x000000ff;
+		
+		System.out.println("Red Color value = "+ red);
+		System.out.println("Green Color value = "+ green);
+		System.out.println("Blue Color value = "+ blue);
+		return image.getRGB(0, 0);
+	}
+	
+//Color Tools
+	
+	public boolean[] rgbCompare(Color inputCol, int redMax, int redMin,
+								int greenMax, int greenMin, int blueMax, int blueMin)
+	{
+		boolean[] res = { ( inputCol.getRed() < redMax || inputCol.getRed() > redMin ),
+						( inputCol.getGreen() < greenMax || inputCol.getGreen() > greenMin ),
+						( inputCol.getBlue() < blueMax || inputCol.getBlue() > blueMin )};
+		return res;
+	}
+	
+	public boolean[] rgbCompare(Color inputCol, int red, int green, int blue, int diff) {
+	return rgbCompare(inputCol, red+diff, red-diff, green+diff, green-diff, blue+diff, blue-diff);
+	}
+	
+	public boolean colorCompare(Color inputCol, int red, int green, int blue, int diff) {
+		return (Math.abs(inputCol.getRed()-red) <diff && Math.abs(inputCol.getGreen()-green) <diff &&
+				Math.abs(inputCol.getBlue()-blue) <diff );
+	}
+	
+	public boolean colorCompare(Color inputCol, int redMax, int redMin,
+			int greenMax, int greenMin, int blueMax, int blueMin)
+	{
+		boolean[] colors = rgbCompare(inputCol, redMax, redMin, greenMax, greenMin, blueMax, blueMin);
+		return colors[0] && colors[1] && colors[2];
+	}
+	
+	public boolean colorCompare(Color inputCol, Color compareCol) {
+	return inputCol.equals(compareCol) ;
 	}
 }

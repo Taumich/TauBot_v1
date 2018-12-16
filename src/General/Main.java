@@ -20,7 +20,9 @@ public class Main
 		
 		GWBot gwbot = new GWBot(c);
 		
-		log( c.pixelScan(2000, 249, 670) );
+		//log( c.pixelScan(2000, 418,577) );
+		log( "color = "+c.colRecComp(3,3,418,577) );
+		
 		if(true)
 			for (int i = 0; i < 10; i++)
 				log( c.pixelScan(2000, 1) );

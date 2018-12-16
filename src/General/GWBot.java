@@ -30,14 +30,10 @@ public class GWBot
 		loginButton();
 		
 //checking if countdown toggle is on.
-		t[0] = 564; t[1] = 760; colScan = c.getColor(t[0], t[1]);
-		if(colScan.getRed() < 80) { //if black, we know countdown is not on
-			log( c.mouseAct(t[0], t[1]) );
-		}
-		c.wait(1000);
+		countdownButton();
 		
 //checking if countdown is counting
-		t[0] = 521; t[1] = 761; colScan = c.getColor(t[0], t[1]);
+		/*t[0] = 521; t[1] = 761; colScan = c.getColor(t[0], t[1]);
 		if(colScan.getRed() < 50) { //if black, we know countdown is not on
 			t[0] = 327; t[1] = 617;
 			log( c.mouseAct(t[0], t[1]) );
@@ -74,36 +70,50 @@ public class GWBot
 		
 		log( c.type('V'));
 		log( c.wait(4000) );
-		log( c.type(KeyEvent.VK_LEFT,5));
+		log( c.type(KeyEvent.VK_LEFT,5));//*/
 		return true;
 	}
 	
-	public boolean loginButton() {
+	
+	public boolean countdownButton ()
+	{
+		target(418,577);
+		colScan = c.getColor(t[0], t[1]);
+		
+		if(!c.colorCompare(colScan, 28, 1, 49, 5)) { //if false, we know countdown is not on
+			log( c.mouseAct(t[0], t[1]) );
+		}
+		c.wait(1000);
+		return true;
+	}
+	
+	public boolean loginButton()
+	{
 		log("___Entered Login Code___");
 		int redLim = 230;
-		target(249, 670);
+		
+		//target(249, 670);
+		target(252, 681);
 		
 		//closes any tab if tab is disturbing
 		colScan = c.getColor(t[0], t[1]);
 		if(colScan.getRed() > redLim) {
-			c.mouseAct(950, 1);
+			log( "Closed window = "+c.closeWindow() );
 			colScan = c.getColor(t[0], t[1]);
 		}
 		
 		log("   Checks if logged in");
-		for (int i=0; (i < 10) && c.getColor(t[0], t[1]).getRed() < redLim; i++)
+		for (int i=0; (i < 10) && !c.colorCompare(colScan, 50,30, 50,30, 50,30); i++)
 			log( c.wait(1000) +" "+ (c.getColor(t[0], t[1]).getRed()) );
 		
-		if(c.getColor(t[0], t[1]).getRed() > redLim) {
-			log("   Was not logged in so acts now");
-			
-			log( c.mouseAct(t[0], t[1]) );
-			
-			c.wait(1000);
-			log("___Exit Login Code___");
-			return true;
-		}
-		return false;
+		//if sees log-in button, click it
+		if (c.colorCompare(colScan, 50,30, 50,30, 50,30))
+			c.mouseAct(t[0],t[1]);
+		else
+			return false;
+		
+		log("___Exit Login Code___");
+		return true;
 	}
 	
 	public static void log(String message) { System.out.println(message); }
