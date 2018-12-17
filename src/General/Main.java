@@ -42,7 +42,7 @@ public class Main
 		int res[] = c.colCompareRange(418,577, 418-200, 577+100, col.getRGB(), 30);
 		log("matching coords: "+res[0]+" "+res[1]);
 		
-		c.mouseTo(res[0], res[1]);
+		c.mouseMove(res[0],res[1]);
 		
 		/*
 		if(true)

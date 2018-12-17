@@ -304,22 +304,13 @@ public class Command
 	public int[] colCompareRange (int x0, int y0, int x, int y, int rgb, int rgbMargin) {
 		
 		int xmin = (int) (((x0<x)? x0 : x)*ratio[0]);
-		int xmax = (int) (((x0>x)? x0 : x)*ratio[0]);
 		int ymin = (int) (((y0<y)? y0 : y)*ratio[1]);
-		int ymax = (int) (((y0>y)? y0 : y)*ratio[1]);
 		
 		BufferedImage image = screenCaptureRange(x0, y0, x, y);
 		int abs[] = {x-x0, y-y0};
-		System.out.println(" width = "+abs[0]+", height = "+abs[1]);
-		
 		double diagonalRate = abs[0]/abs[1];
-		
 		int maxSteps = (int) (abs[0]/diagonalRate) -1;
-		System.out.println(maxSteps);
-		
 		int start[] = 	{ (abs[0]<0)? Math.abs(abs[0])-1:0, (abs[1]<0)? Math.abs(abs[1])-1:0 };
-		System.out.println(" start = "+start[0]+", "+start[1]);
-		
 		int cur[] = new int[2];
 		int[] location = new int[2];
 		
@@ -328,21 +319,16 @@ public class Command
 			cur[0] = Math.abs((int) (start[0]+i*diagonalRate));
 			cur[1] = Math.abs((int) (start[1]+i));
 			
-			System.out.println(i+" cur = "+cur[0]+", "+cur[1]);
-			
-			location[0] = (int) xmin+cur[0];
-			location[1] = (int) ymin+cur[1];
-			
 			if (colorCompareMargin(image.getRGB(cur[0], cur[1]), rgb, rgbMargin))
 			{
-				
 				location[0] = (int) (location[0]/ratio[0]);
 				location[1] = (int) (location[1]/ratio[1]);
 				break;
 			}
-			bot.mouseMove(location[0],location[1]);
-			bot.delay(100);
 			
+			location[0] = (int) xmin+cur[0];
+			location[1] = (int) ymin+cur[1];
+			//bot.mouseMove(location[0],location[1]);
 		}
 		
 		return location;
@@ -392,10 +378,10 @@ public class Command
 		int  g[]  = { (inputRGB & 0x0000ff00) >> 8	, (compareRGB & 0x0000ff00) >> 8	};
 		int  b[]  = {  inputRGB & 0x000000ff		,  compareRGB & 0x000000ff			};
 		
-		System.out.println("Margin "+diff);
-		System.out.println("comparing r "+r[0]+" vs "+r[1]);
-		System.out.println("comparing g "+g[0]+" vs "+g[1]);
-		System.out.println("comparing b "+b[0]+" vs "+b[1]);
+		//System.out.println("Margin "+diff);
+		//System.out.println("comparing r "+r[0]+" vs "+r[1]);
+		//System.out.println("comparing g "+g[0]+" vs "+g[1]);
+		//System.out.println("comparing b "+b[0]+" vs "+b[1]);
 		
 		return ( Math.abs(r[0]-r[1]) < diff && Math.abs(g[0]-g[1]) < diff && Math.abs(b[0]-b[1]) < diff );
 	}
