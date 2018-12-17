@@ -106,6 +106,7 @@ public class GWBot
 		for (int i=0; (i < 10) && !c.colorCompare(colScan, 50,30, 50,30, 50,30); i++)
 			log( c.wait(1000) +" "+ (c.getColor(t[0], t[1]).getRed()) );
 		
+		
 		//if sees log-in button, click it
 		if (c.colorCompare(colScan, 50,30, 50,30, 50,30))
 			c.mouseAct(t[0],t[1]);

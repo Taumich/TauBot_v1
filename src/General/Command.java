@@ -53,8 +53,16 @@ public class Command
 		return res;
 	}
 	
+	public int[] getMouseLocConverted() {
+		mouseX = (int) MouseInfo.getPointerInfo().getLocation().getX();
+		mouseY = (int) MouseInfo.getPointerInfo().getLocation().getY();
+		int[] res = { (int) (mouseX/ratio[0]), (int) (mouseY/ratio[1])};
+		System.out.println("mouse: "+res[0]+" "+res[1]);
+		return res;
+	}
+	
 	private double[] getMouseLocDouble() {
-		getMouseLoc();
+		getMouseLoc(); //to update mouseX and mouseY
 		double[] res = {MouseInfo.getPointerInfo().getLocation().getX(), MouseInfo.getPointerInfo().getLocation().getY()};
 		return res;
 	}
@@ -108,7 +116,7 @@ public class Command
 		bot.delay(delay);
 		bot.keyRelease(specKey);
 		bot.waitForIdle();
-		bot.delay(delay);
+		bot.delay(10);
 		return "Hit key: "+specKey;
 	}
 
@@ -278,7 +286,10 @@ public class Command
 	{
 		BufferedImage image = bot.createScreenCapture(screenRect);
 		
-		int clr = image.getRGB( (int) (x) , (int) (y) );
+		x = (int) (x*ratio[0]);
+		y = (int) (y*ratio[1]);
+		
+		int clr = image.getRGB( x, y);
 		int  red   = (clr & 0x00ff0000) >> 16;
 		int  green = (clr & 0x0000ff00) >> 8;
 		int  blue  =  clr & 0x000000ff;
@@ -290,12 +301,71 @@ public class Command
 		return image.getRGB(0, 0);
 	}
 	
+	public int[] colCompareRange (int x0, int y0, int x, int y, int rgb, int rgbMargin) {
+		
+		int xmin = (int) (((x0<x)? x0 : x)*ratio[0]);
+		int xmax = (int) (((x0>x)? x0 : x)*ratio[0]);
+		int ymin = (int) (((y0<y)? y0 : y)*ratio[1]);
+		int ymax = (int) (((y0>y)? y0 : y)*ratio[1]);
+		
+		BufferedImage image = screenCaptureRange(x0, y0, x, y);
+		int abs[] = {x-x0, y-y0};
+		System.out.println(" width = "+abs[0]+", height = "+abs[1]);
+		
+		double diagonalRate = abs[0]/abs[1];
+		
+		int maxSteps = (int) (abs[0]/diagonalRate) -1;
+		System.out.println(maxSteps);
+		
+		int start[] = 	{ (abs[0]<0)? Math.abs(abs[0])-1:0, (abs[1]<0)? Math.abs(abs[1])-1:0 };
+		System.out.println(" start = "+start[0]+", "+start[1]);
+		
+		int cur[] = new int[2];
+		int[] location = new int[2];
+		
+		for(int i=1; i < maxSteps; i++)
+		{
+			cur[0] = Math.abs((int) (start[0]+i*diagonalRate));
+			cur[1] = Math.abs((int) (start[1]+i));
+			
+			System.out.println(i+" cur = "+cur[0]+", "+cur[1]);
+			
+			location[0] = (int) xmin+cur[0];
+			location[1] = (int) ymin+cur[1];
+			
+			if (colorCompareMargin(image.getRGB(cur[0], cur[1]), rgb, rgbMargin))
+			{
+				
+				location[0] = (int) (location[0]/ratio[0]);
+				location[1] = (int) (location[1]/ratio[1]);
+				break;
+			}
+			bot.mouseMove(location[0],location[1]);
+			bot.delay(100);
+			
+		}
+		
+		return location;
+	}
+	
 	public BufferedImage screenCapture (int x, int y) {
 		BufferedImage image = bot.createScreenCapture(screenRect);
 		return image;
 	}
 	
+	public BufferedImage screenCaptureRange (int x0, int y0, int x, int y) {
+		int xmin = (int) (((x0<x)? x0 : x)*ratio[0]);
+		int xmax = (int) (((x0>x)? x0 : x)*ratio[0]);
+		int ymin = (int) (((y0<y)? y0 : y)*ratio[1]);
+		int ymax = (int) (((y0>y)? y0 : y)*ratio[1]);
+		Rectangle bounds = new Rectangle( xmin, ymin, xmax-xmin, ymax-ymin);
+		BufferedImage image = bot.createScreenCapture(bounds);
+		return image;
+	}
+	
 	public BufferedImage subScreenCapture (int x, int y, int size) {
+		x = (int) (x*ratio[0]);
+		y = (int) (y*ratio[1]);
 		Rectangle bounds = new Rectangle(x, y, size, size);
 		BufferedImage image = bot.createScreenCapture(bounds);
 		return image;
@@ -306,14 +376,28 @@ public class Command
 	public boolean[] rgbCompare(Color inputCol, int redMax, int redMin,
 								int greenMax, int greenMin, int blueMax, int blueMin)
 	{
-		boolean[] res = { ( inputCol.getRed() < redMax || inputCol.getRed() > redMin ),
-						( inputCol.getGreen() < greenMax || inputCol.getGreen() > greenMin ),
-						( inputCol.getBlue() < blueMax || inputCol.getBlue() > blueMin )};
+		boolean[] res = { (inputCol.getRed()  < redMax 		|| inputCol.getRed()  > redMin ),
+						(  inputCol.getGreen()< greenMax 	|| inputCol.getGreen()> greenMin ),
+						(  inputCol.getBlue() < blueMax 	|| inputCol.getBlue() > blueMin )};
 		return res;
 	}
 	
 	public boolean[] rgbCompare(Color inputCol, int red, int green, int blue, int diff) {
 	return rgbCompare(inputCol, red+diff, red-diff, green+diff, green-diff, blue+diff, blue-diff);
+	}
+	
+	public boolean colorCompareMargin(int inputRGB, int compareRGB, int diff)
+	{
+		int  r[]  = { (inputRGB & 0x00ff0000) >> 16	, (compareRGB & 0x00ff0000) >> 16	};
+		int  g[]  = { (inputRGB & 0x0000ff00) >> 8	, (compareRGB & 0x0000ff00) >> 8	};
+		int  b[]  = {  inputRGB & 0x000000ff		,  compareRGB & 0x000000ff			};
+		
+		System.out.println("Margin "+diff);
+		System.out.println("comparing r "+r[0]+" vs "+r[1]);
+		System.out.println("comparing g "+g[0]+" vs "+g[1]);
+		System.out.println("comparing b "+b[0]+" vs "+b[1]);
+		
+		return ( Math.abs(r[0]-r[1]) < diff && Math.abs(g[0]-g[1]) < diff && Math.abs(b[0]-b[1]) < diff );
 	}
 	
 	public boolean colorCompare(Color inputCol, int red, int green, int blue, int diff) {
