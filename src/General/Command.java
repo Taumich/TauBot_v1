@@ -32,11 +32,13 @@ public class Command
 		//check screenRange
 		getMouseLoc();
 		bot.mouseMove(10000,10000);
+		bot.waitForIdle();
+		bot.delay(10);
 		screen[0] = MouseInfo.getPointerInfo().getLocation().getX();
 		screen[1] = MouseInfo.getPointerInfo().getLocation().getY();
 		setRes(1000,1000);
 		System.out.println("Screen: ("+screen[0]+" "+screen[1]+") space: "+screen[0]/ratio[0]+" , "+screen[1]/ratio[1]);
-		bot.mouseMove(mouseX, mouseY);
+		mouseTo(mouseX, mouseY);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = toolkit.getScreenSize();
 		screenRect = new Rectangle(screenSize);
@@ -49,7 +51,7 @@ public class Command
 		mouseX = (int) MouseInfo.getPointerInfo().getLocation().getX();
 		mouseY = (int) MouseInfo.getPointerInfo().getLocation().getY();
 		int[] res = {mouseX, mouseY};
-		System.out.println("mouse: "+res[0]+" "+res[1]);
+		//System.out.println("mouse: "+res[0]+" "+res[1]);
 		return res;
 	}
 	
@@ -157,19 +159,23 @@ public class Command
 //Mouse Tools
 	
 	//Converts mouse from client-side coordinates to screen-space coordinates, sends to teleport mouse method.
-	public String mouseTo (int x, int y) { return mousePort((int) (x*ratio[0]), (int) (y*ratio[1])); }
+	public String mouseTo (int x, int y) {
+		//System.out.println("input: "+x+" "+y);
+		//System.out.println("converted: "+(int) (x*ratio[0])+" "+(int) (y*ratio[1]));
+		return mousePort((int) (x*ratio[0]), (int) (y*ratio[1])); }
 	
 	//Teleports mouse to screen-space coordinates.
 	private String mousePort (int x, int y) {
-		mouseX = x;
-		mouseY = y;
-		bot.mouseMove(mouseX, mouseY);
+		getMouseLoc();
+		for (int i=0; i < 10 && mouseX != x; i++) {
+			bot.mouseMove(x, y);
+			getMouseLoc();
+		}
 		return "mouse teleported to x="+x+" y="+y;
 	}
 	
 	public String mouseAct (int x, int y) {
 		mouseMove(x,y);
-		mouseTo(x,y);
 		mouseClick(InputEvent.BUTTON1_DOWN_MASK);
 		return "Mouse acted to and at "+x+" "+y;
 	}
@@ -184,10 +190,10 @@ public class Command
 			interval = 40;
 		
 		while ( Math.abs(diff[0]) > 1 && Math.abs(diff[1]) > 1) {
-			if( Math.abs(diff[0]) <= 3) mouseX = (int) target_loc[0];
+			if( Math.abs(diff[0]) <= 2) mouseX = (int) target_loc[0];
 			else mouseX = mouseX + (int) ((Math.abs(diff[0]) > interval)? diff[0]/interval : Math.signum(diff[0]));
 				
-			if( Math.abs(diff[1]) <= 3) mouseY = (int) target_loc[1];
+			if( Math.abs(diff[1]) <= 2) mouseY = (int) target_loc[1];
 			else mouseY = mouseY + (int) ((Math.abs(diff[1]) > interval)? diff[1]/interval : Math.signum(diff[1]));
 			
 				diff[0] = target_loc[0] - mouseX;
@@ -201,7 +207,27 @@ public class Command
 				break;
 		}
 		
+		System.out.println("extra check:");
+		if(mouseX != target_loc[0] && mouseY != target_loc[1]) {
+			System.out.println(" fix needed:");
+			mouseMoveTowards(x,y);
+		}
+		
 		return "mouse moved from ("+initial_loc[0]+","+initial_loc[1]+") to ("+mouseX+","+mouseY+") ";
+	}
+	
+	private boolean mouseMoveTowards(int x, int y) {
+		int 	target_loc[] = {(int) (x*ratio[0]), (int) (y*ratio[1]) };
+		int 	diff[] 		 = {(int) (Math.signum(target_loc[0]-mouseX)),
+								(int) (Math.signum(target_loc[1]-mouseY)) };
+		
+		for (int i=0; i < 40 && (mouseX != target_loc[0] || mouseY != target_loc[1]); i++) {
+			bot.mouseMove(mouseX+ ( (mouseX==target_loc[0])? 0:diff[0]), mouseY+ ( (mouseY==target_loc[1])? 0:diff[1]));
+			getMouseLoc();
+			bot.waitForIdle();
+			bot.delay(1000/120);
+		}//*/
+		return mouseX != x && mouseY != y;
 	}
 	
 	public String paste (String message) {
@@ -244,7 +270,7 @@ public class Command
 	
 	public boolean closeWindow() {
 		Color colScan = getColor(500, 500);
-		mouseAct(950,2);
+		mouseAct(930,2);
 		return colorCompare(colScan,getColor(500, 500));
 	}
 	
@@ -308,30 +334,45 @@ public class Command
 		
 		BufferedImage image = screenCaptureRange(x0, y0, x, y);
 		int abs[] = {x-x0, y-y0};
-		double diagonalRate = abs[0]/abs[1];
-		int maxSteps = (int) (abs[0]/diagonalRate) -1;
+		double diagonalRate = (abs[0]/abs[1]);
+		int maxSteps = (int) (abs[1]) -1;
 		int start[] = 	{ (abs[0]<0)? Math.abs(abs[0])-1:0, (abs[1]<0)? Math.abs(abs[1])-1:0 };
 		int cur[] = new int[2];
 		int[] location = new int[2];
-		
+		System.out.println("abs="+abs[0]+", "+abs[1]+" dr="+diagonalRate+"\nmaxSteps="+maxSteps+"\nStart="+start[0]+", "+start[1]);
 		for(int i=1; i < maxSteps; i++)
 		{
 			cur[0] = Math.abs((int) (start[0]+i*diagonalRate));
 			cur[1] = Math.abs((int) (start[1]+i));
 			
+			//location[0] = (int) xmin+cur[0];
+			//location[1] = (int) ymin+cur[1];
+			//bot.mouseMove(location[0],location[1]);
+			//bot.mouseMove(location[0],location[1]);
+			//wait(100);
+			//mouseTo(500,500);
+			
 			if (colorCompareMargin(image.getRGB(cur[0], cur[1]), rgb, rgbMargin))
 			{
+				
+				location[0] = (int) xmin+cur[0];
+				location[1] = (int) ymin+cur[1];
+				//bot.mouseMove(location[0],location[1]);
 				location[0] = (int) (location[0]/ratio[0]);
 				location[1] = (int) (location[1]/ratio[1]);
+				//mouseMove(location[0],location[1]);
+				//mouseMove(location[0],location[1]);
 				break;
 			}
-			
-			location[0] = (int) xmin+cur[0];
-			location[1] = (int) ymin+cur[1];
-			//bot.mouseMove(location[0],location[1]);
+			//System.out.println("i="+i+" locX="+location[0]+" locY="+location[1]);
+			//wait(100);
 		}
-		
 		return location;
+	}
+		
+	public boolean colCompRangeCheck (int x0, int y0, int x, int y, int rgb, int rgbMargin) {
+			int[] match = colCompareRange(x0, y0, x, y, rgb, rgbMargin);
+		return !(match[0]==0 && match[1]==0);
 	}
 	
 	public BufferedImage screenCapture (int x, int y) {
@@ -344,6 +385,7 @@ public class Command
 		int xmax = (int) (((x0>x)? x0 : x)*ratio[0]);
 		int ymin = (int) (((y0<y)? y0 : y)*ratio[1]);
 		int ymax = (int) (((y0>y)? y0 : y)*ratio[1]);
+		System.out.println("xmin=" + xmin+" ymin="+ymin);
 		Rectangle bounds = new Rectangle( xmin, ymin, xmax-xmin, ymax-ymin);
 		BufferedImage image = bot.createScreenCapture(bounds);
 		return image;
