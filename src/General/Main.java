@@ -18,9 +18,7 @@ public class Main
 		try { c = new Command(); }
 		catch (AWTException e) { e.printStackTrace(); }
 		
-		GWBot gwBot = new GWBot(c);
-		
-		int hej = 0;
+		GWBot gwbot = new GWBot(c);
 		
 		//c.screenCaptureRange(418,577, 518, 77);
 		c.wait(3000);
