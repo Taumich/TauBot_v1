@@ -3,6 +3,7 @@ package General;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -18,8 +19,8 @@ import java.util.Random;
 public class Command 
 {
 	Robot bot;
-	int mouseX = 100,
-		mouseY = 100;
+	int mouseX = 0,
+		mouseY = 0;
 	
 	double 	screen[] = {0,0},
 			ratio[] = {1,1}; //monitor ratio for when screen resolution and cursor location don't match
@@ -40,6 +41,9 @@ public class Command
 		Dimension screenSize = toolkit.getScreenSize();
 		screenRect = new Rectangle(screenSize);
 	}
+	
+	public double[] getScreenSpaceResolution () { return screen; }
+	public double[] getScreenSpaceRatio () { return ratio; }
 	
 	private int[] getMouseLoc() {
 		mouseX = (int) MouseInfo.getPointerInfo().getLocation().getX();
@@ -274,7 +278,7 @@ public class Command
 	{
 		BufferedImage image = bot.createScreenCapture(screenRect);
 		
-		int clr = image.getRGB(x,y);
+		int clr = image.getRGB( (int) (x) , (int) (y) );
 		int  red   = (clr & 0x00ff0000) >> 16;
 		int  green = (clr & 0x0000ff00) >> 8;
 		int  blue  =  clr & 0x000000ff;
@@ -282,7 +286,19 @@ public class Command
 		System.out.println("Red Color value = "+ red);
 		System.out.println("Green Color value = "+ green);
 		System.out.println("Blue Color value = "+ blue);
+		
 		return image.getRGB(0, 0);
+	}
+	
+	public BufferedImage screenCapture (int x, int y) {
+		BufferedImage image = bot.createScreenCapture(screenRect);
+		return image;
+	}
+	
+	public BufferedImage subScreenCapture (int x, int y, int size) {
+		Rectangle bounds = new Rectangle(x, y, size, size);
+		BufferedImage image = bot.createScreenCapture(bounds);
+		return image;
 	}
 	
 //Color Tools

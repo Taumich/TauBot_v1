@@ -21,13 +21,19 @@ public class Main
 		GWBot gwbot = new GWBot(c);
 		
 		//log( c.pixelScan(2000, 418,577) );
-		log( "color = "+c.colRecComp(3,3,418,577) );
+		//log( "color = "+c.colRecComp(3,3,418,577) );
+		//Window window = new Window(c.subScreenCapture(418,577,100));
+		Window window = new Window(c.subScreenCapture(500,500,100));
 		
+		window.render();
+		window.pixelColor(0, 0);
+		
+		/*
 		if(true)
 			for (int i = 0; i < 10; i++)
 				log( c.pixelScan(2000, 1) );
 		else
-			log( "gwBot completed = "+ gwbot.bot() );
+			log( "gwBot completed = "+ gwbot.bot() ); //*/
 	}
 	
 	public static void log(String message) { System.out.println(message); }
