@@ -13,6 +13,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
@@ -82,6 +83,8 @@ public class Command
 
 //Click tools
 	
+	public String mouseClick () { return mouseClick(MouseEvent.BUTTON1_DOWN_MASK); }
+	
 	//One mouse button click
 	public String mouseClick (int input) {
 		bot.mousePress(input);
@@ -105,10 +108,27 @@ public class Command
 	//Clicks a special action key that cannot be sent as a character.
 	public String type (int specKey) {
 		bot.keyPress(specKey);
-		bot.waitForIdle();
+		bot.delay(100);
 		bot.keyRelease(specKey);
 		bot.waitForIdle();
 		return "Hit key: "+specKey;
+	}
+	
+	public String type (int specKey, boolean shiftElseCtrl) {
+		if (shiftElseCtrl) {
+			bot.keyPress(KeyEvent.SHIFT_DOWN_MASK);
+			bot.keyPress(specKey);
+			bot.keyRelease(specKey);
+			bot.keyRelease(KeyEvent.SHIFT_DOWN_MASK);
+			bot.waitForIdle();
+		} else {
+			bot.keyPress(KeyEvent.CTRL_DOWN_MASK);
+			bot.keyPress(specKey);
+			bot.keyRelease(specKey);
+			bot.keyRelease(KeyEvent.CTRL_DOWN_MASK);
+			bot.waitForIdle();
+		}
+		return "Hit key: "+specKey+" and shift="+shiftElseCtrl;
 	}
 	
 	//Clicks a special action key that cannot be sent as a character with a key release delay.
@@ -206,9 +226,7 @@ public class Command
 				break;
 		}
 		
-		System.out.println("extra check:");
 		if(mouseX != target_loc[0] && mouseY != target_loc[1]) {
-			System.out.println(" fix needed:");
 			mouseMoveTowards(x,y);
 		}
 		
@@ -279,6 +297,12 @@ public class Command
 		int loc[] = colCompareRange (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2);
 		mouseAct(loc[0], loc[1]+3);
 		paste(appName);
+		wait(1000);
+		type(KeyEvent.VK_ENTER);
+		wait(1000);
+		type(KeyEvent.VK_TAB);
+		bot.waitForIdle();
+		type(KeyEvent.VK_ENTER);
 		wait(1000);
 		type(KeyEvent.VK_ENTER);
 		return true;
