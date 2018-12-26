@@ -57,11 +57,11 @@ public class Main
 		c.wait(1000);
 		c.mouseMove(res[0],res[1]);//*/
 		
-		if(!true)
-			for (int i = 0; i < 10; i++)
-				log( c.pixelScan(2000, 1) );
-		else
-			log( "gwBot completed = "+ gwbot.bot() ); //*/
+		switch(1) {
+			case 0:	for (int i = 0; i < 10; i++)
+						log( c.pixelScan(2000, 1) );
+			case 1:	log( "gwBot completed = "+ gwbot.bot() ); //*/
+		}
 	}
 	
 	public static void log(String message) { System.out.println(message); }
