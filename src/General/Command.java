@@ -160,9 +160,8 @@ public class Command
 	
 	//Converts mouse from client-side coordinates to screen-space coordinates, sends to teleport mouse method.
 	public String mouseTo (int x, int y) {
-		//System.out.println("input: "+x+" "+y);
-		//System.out.println("converted: "+(int) (x*ratio[0])+" "+(int) (y*ratio[1]));
-		return mousePort((int) (x*ratio[0]), (int) (y*ratio[1])); }
+		return mousePort((int) (x*ratio[0]), (int) (y*ratio[1]));
+	}
 	
 	//Teleports mouse to screen-space coordinates.
 	private String mousePort (int x, int y) {
@@ -266,6 +265,23 @@ public class Command
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean openWebApp (String appName) {
+		if (!openApp("Google Chrome"))	return false;
+		wait(2000);
+		if (!colCompRangeCheck (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2)) {
+			wait(2000);
+			if (!colCompRangeCheck (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2))
+				return false;
+		}
+		
+		int loc[] = colCompareRange (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2);
+		mouseAct(loc[0], loc[1]+3);
+		paste(appName);
+		wait(1000);
+		type(KeyEvent.VK_ENTER);
+		return true;
 	}
 	
 	public boolean closeWindow() {

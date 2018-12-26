@@ -19,6 +19,7 @@ public class Main
 		catch (AWTException e) { e.printStackTrace(); }
 		
 		GWBot gwbot = new GWBot(c);
+		InstaBot instabot = new InstaBot(c);
 		
 		//c.screenCaptureRange(418,577, 518, 77);
 		c.wait(3000);
@@ -57,10 +58,11 @@ public class Main
 		c.wait(1000);
 		c.mouseMove(res[0],res[1]);//*/
 		
-		switch(1) {
+		switch(2) {
 			case 0:	for (int i = 0; i < 10; i++)
 						log( c.pixelScan(2000, 1) );
 			case 1:	log( "gwBot completed = "+ gwbot.bot() ); //*/
+			case 2:	log( "InstaBot completed = "+ instabot.bot() ); //*/
 		}
 	}
 	

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
-public class GWBot
+public class GWBot implements Bot
 {
 	static Color colScan;
 	static int[] t = new int[2];
