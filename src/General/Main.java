@@ -58,7 +58,8 @@ public class Main
 		c.wait(1000);
 		c.mouseMove(res[0],res[1]);//*/
 		
-		switch(2) {
+		switch(2)
+		{
 			case 0:	for (int i = 0; i < 10; i++)
 						log( c.pixelScan(2000, 1) );
 			case 1:	log( "gwBot completed = "+ gwbot.bot() ); //*/

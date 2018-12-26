@@ -25,14 +25,14 @@ public class InstaBot implements Bot
 			return false;
 		
 		colScan = new Color(58, 58, 58);
-		//if(!c.colorCompare(colScan, c.getColor(500, 3))) {
-		//	if(!fillWindow())
-		//		return false;
-		//}
+		if(c.colorCompare(colScan, c.getColor(500, 3))) {
+			if(!fillWindow())
+				return false;
+		}
 			
 		c.wait(2000);
 		
-		if(!instaSearch("#blender"))
+		if(!instaSearch("#warhammer"))
 			return false;
 		
 		c.wait(3000);
@@ -42,7 +42,7 @@ public class InstaBot implements Bot
 		
 		c.wait((int) (500+300*Math.random()) );
 		
-		for(int i=0; i < 5; i++)
+		for(int i=0; i < 30; i++)
 			if (!postAction())
 				break;
 		
@@ -52,6 +52,7 @@ public class InstaBot implements Bot
 	private boolean postAction ()
 	{
 		c.mouseClick(MouseEvent.BUTTON1_DOWN_MASK, 2);
+		c.mouseMove((int) (400+100*Math.random()), (int) (450+100*Math.random()));
 		c.wait((int) (300+300*Math.random()) );
 		c.type(KeyEvent.VK_RIGHT);
 		c.wait((int) (1000+1000*Math.random()) );
@@ -77,9 +78,9 @@ public class InstaBot implements Bot
 	private boolean fillWindow ()
 	{
 		Main.log("___Entered Fill Window____");
-		if (!c.colCompRangeCheck(500, 500, 501, 3, colScan.getRGB(), 5))
+		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 3))
 			return false;
-		int[] loc = c.colCompareRange(500, 500, 501, 3, colScan.getRGB(), 5);
+		int[] loc = c.colCompareRange(450, 3, 550, 500, colScan.getRGB(), 3);
 		c.mouseTo(loc[0], loc[1]);
 		c.wait(300);
 		c.mouseClick();

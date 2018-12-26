@@ -89,10 +89,10 @@ public class Command
 	public String mouseClick (int input) {
 		bot.mousePress(input);
 		bot.waitForIdle();
-		bot.delay(10);
+		bot.delay(15+ (int)(50*Math.random()));
 		bot.mouseRelease(input);
 		bot.waitForIdle();
-		bot.delay(10);
+		bot.delay(15+ (int)(100*Math.random()));
 		
 		return "mouse clicked";
 	}
@@ -108,7 +108,7 @@ public class Command
 	//Clicks a special action key that cannot be sent as a character.
 	public String type (int specKey) {
 		bot.keyPress(specKey);
-		bot.delay(100);
+		bot.delay(100+ (int)(100*Math.random()) );
 		bot.keyRelease(specKey);
 		bot.waitForIdle();
 		return "Hit key: "+specKey;
@@ -297,13 +297,15 @@ public class Command
 		int loc[] = colCompareRange (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2);
 		mouseAct(loc[0], loc[1]+3);
 		paste(appName);
-		wait(1000);
+		wait(500);
 		type(KeyEvent.VK_ENTER);
-		wait(1000);
+		wait(2000);
 		type(KeyEvent.VK_TAB);
 		bot.waitForIdle();
 		type(KeyEvent.VK_ENTER);
-		wait(1000);
+		wait(500);
+		type(KeyEvent.VK_ENTER);
+		wait(500);
 		type(KeyEvent.VK_ENTER);
 		return true;
 	}
@@ -379,7 +381,7 @@ public class Command
 		int start[] = 	{ (abs[0]<0)? Math.abs(abs[0])-1:0, (abs[1]<0)? Math.abs(abs[1])-1:0 };
 		int cur[] = new int[2];
 		int[] location = new int[2];
-		System.out.println("abs="+abs[0]+", "+abs[1]+" dr="+diagonalRate+"\nmaxSteps="+maxSteps+"\nStart="+start[0]+", "+start[1]);
+		//System.out.println("abs="+abs[0]+", "+abs[1]+" dr="+diagonalRate+"\nmaxSteps="+maxSteps+"\nStart="+start[0]+", "+start[1]);
 		for(int i=1; i < maxSteps; i++)
 		{
 			cur[0] = Math.abs((int) (start[0]+i*diagonalRate));
@@ -425,7 +427,7 @@ public class Command
 		int xmax = (int) (((x0>x)? x0 : x)*ratio[0]);
 		int ymin = (int) (((y0<y)? y0 : y)*ratio[1]);
 		int ymax = (int) (((y0>y)? y0 : y)*ratio[1]);
-		System.out.println("xmin=" + xmin+" ymin="+ymin);
+		//System.out.println("xmin=" + xmin+" ymin="+ymin);
 		Rectangle bounds = new Rectangle( xmin, ymin, xmax-xmin, ymax-ymin);
 		BufferedImage image = bot.createScreenCapture(bounds);
 		return image;
