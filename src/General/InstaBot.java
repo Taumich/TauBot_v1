@@ -9,9 +9,11 @@ public class InstaBot implements Bot
 	static Color colScan;
 	static int[] t = new int[2];
 	static Command c = null;
+	static String message = null;
 	
 	public InstaBot(Command com) {
 		c = com;
+		message = "initialized";
 	}
 	
 	public static void target(int x, int y) {
@@ -19,26 +21,27 @@ public class InstaBot implements Bot
 		t[1] = y;
 	}
 	
-	public String bot(String hashtag, int repeats)
+	public boolean bot(String hashtag, int repeats)
 	{
 		if(!c.openWebApp("Instagram") )
-			return "Failed to open app";
+			return false;
 		
 		colScan = new Color(58, 58, 58);
-		if(c.colorCompare(colScan, c.getColor(500, 3))) {
+		Main.log("Window = "+c.colorCompare(colScan, c.getColor(500, 3)));
+		if(!c.colorCompare(colScan, c.getColor(500, 3))) {
 			if(!fillWindow())
-				return "Failed to fill window";
+				return false;
 		}
 			
 		c.wait(2000);
 		
 		if(!instaSearch(hashtag))
-			return "Failed to search hashtag";
+			return false;
 		
 		c.wait(3000);
 		
 		if (!openPosts())
-			return "Failed to open post";
+			return false;
 		
 		c.wait((int) (500+300*Math.random()) );
 		
@@ -46,7 +49,7 @@ public class InstaBot implements Bot
 			if (!postAction())
 				break;
 		
-		return "Success";
+		return true;
 	}
 	
 	private boolean postAction ()
@@ -54,11 +57,11 @@ public class InstaBot implements Bot
 		Main.log("___Entered Post Action____");
 		c.mouseClick(MouseEvent.BUTTON1_DOWN_MASK, 2);
 		c.mouseMove((int) (400+100*Math.random()), (int) (450+100*Math.random()));
-		c.wait((int) (300+300*Math.random()) );
+		c.wait((int) (30+300*Math.random()) );
 		c.type(KeyEvent.VK_RIGHT);
-		c.wait((int) (1000+1000*Math.random()) );
+		c.wait((int) (500+1000*Math.random()) );
 		
-		Main.log("___Exit Post Action____");
+		Main.log(" Post Action Success");
 		return true;
 	}
 	
@@ -76,22 +79,24 @@ public class InstaBot implements Bot
 		c.mouseMove(500, 500);
 		c.mouseTo(500, 500);
 		
-		Main.log("___Exit Open Posts____");
+		Main.log(" Open Post Success");
 		return true;
 	}
 	
 	private boolean fillWindow ()
 	{
 		Main.log("___Entered Fill Window____");
-		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 3))
+		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 3)) {
+			message = "Error: Searching for window:\n Did not find color in range";
 			return false;
+		}
 		int[] loc = c.colCompareRange(450, 3, 550, 500, colScan.getRGB(), 3);
 		c.mouseTo(loc[0], loc[1]);
 		c.wait(300);
 		c.mouseClick();
 		c.wait(300);
 		c.mouseClick();
-		Main.log("___Exit Fill Window____");
+		Main.log(" Fill Window Success");
 		return true;
 	}
 	
@@ -100,8 +105,10 @@ public class InstaBot implements Bot
 		Main.log("___Entered insta search____");
 		// First check if  finding the white area in instagram header
 		colScan = new Color(255, 255, 255);
-		if (!c.colCompRangeCheck(100, 20, 101, 500, colScan.getRGB(), 1))
+		if (!c.colCompRangeCheck(100, 20, 101, 500, colScan.getRGB(), 1)) {
+			message = "Error: Searching for window white area:\n Did not find color in range";
 			return false;
+		}
 		int[] loc = c.colCompareRange(100, 20, 101, 500, colScan.getRGB(), 1);
 		c.mouseMove(loc[0], loc[1]);
 		
@@ -109,8 +116,10 @@ public class InstaBot implements Bot
 		
 		//then check if finding the end of the white are in instagram header
 		colScan = new Color(250, 250, 250);
-		if (!c.colCompRangeCheck(loc[0], loc[1]+1, loc[0]+1, 500, colScan.getRGB(), 2))
+		if (!c.colCompRangeCheck(loc[0], loc[1]+1, loc[0]+1, 500, colScan.getRGB(), 2)) {
+			message = "Error: Searching for window insta area:\n Did not find color in range";
 			return false;
+		}
 		int[] locEnd = c.colCompareRange(loc[0], loc[1]+1, loc[0]+10, 500, colScan.getRGB(), 2);
 		c.mouseMove(locEnd[0], locEnd[1]);
 		
@@ -128,7 +137,7 @@ public class InstaBot implements Bot
 		c.wait(300);
 		c.type(KeyEvent.VK_ENTER);
 		
-		Main.log("___Exit insta search____");
+		Main.log(" Insta Search Success");
 		return true;
 	}
 }

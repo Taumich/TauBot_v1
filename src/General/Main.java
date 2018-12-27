@@ -62,8 +62,9 @@ public class Main
 		{
 			case 0:	for (int i = 0; i < 10; i++)
 						log( c.pixelScan(2000, 1) );
-			case 1:	log( "gwBot completed = "+ gwbot.bot() ); //*/
-			case 2:	log( "InstaBot completed = "+ instabot.bot("#warhammer40k", 100) ); //*/
+			case 1:	log( "gwBot completed = "+ gwbot.bot() ); //*/	
+			case 2: log( (instabot.bot("#warhammer40k", 1))? "Instabot success" : instabot.message);
+				//*/
 		}
 	}
 	
