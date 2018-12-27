@@ -19,34 +19,34 @@ public class InstaBot implements Bot
 		t[1] = y;
 	}
 	
-	public boolean bot()
+	public String bot(String hashtag, int repeats)
 	{
 		if(!c.openWebApp("Instagram") )
-			return false;
+			return "Failed to open app";
 		
 		colScan = new Color(58, 58, 58);
 		if(c.colorCompare(colScan, c.getColor(500, 3))) {
 			if(!fillWindow())
-				return false;
+				return "Failed to fill window";
 		}
 			
 		c.wait(2000);
 		
-		if(!instaSearch("#warhammer"))
-			return false;
+		if(!instaSearch(hashtag))
+			return "Failed to search hashtag";
 		
 		c.wait(3000);
 		
 		if (!openPosts())
-			return false;
+			return "Failed to open post";
 		
 		c.wait((int) (500+300*Math.random()) );
 		
-		for(int i=0; i < 30; i++)
+		for(int i=0; i < repeats; i++)
 			if (!postAction())
 				break;
 		
-		return true;
+		return "Success";
 	}
 	
 	private boolean postAction ()
