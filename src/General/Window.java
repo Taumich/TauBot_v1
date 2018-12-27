@@ -1,30 +1,102 @@
 package General;
 
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 
 public class Window
 {
-	JFrame frame;
-	JLabel label = new JLabel();
+	JFrame frame = new JFrame();
+	JTextArea console = new JTextArea("Console log:");
+	Container box_Top = new Container();
+	Container box_L = new Container();
+	Container box_R = new Container();
+	JButton[] button;
 	BufferedImage image;
 	
-	public Window ()
-	{
-		frame = new JFrame();
-		label = new JLabel();
-	}
+	public Window () {}
 	
 	public Window (BufferedImage image)
 	{
 		this.image = image;
-		frame = new JFrame();
+	}
+	
+	public void start()
+	{
+		String[] buttonNames = {"Idle Test","GW-Launcher","Insta W40k Liker 30","Insta W40k Liker 100","Insta Blender Liker 100"};
+		JTextArea 	welcomeText = new JTextArea("Welcome! \nI am TauBot MKI. This is my interface with you.\nHere are some available commands:");
+		button = new JButton[buttonNames.length];
+		
+		int dim[] = {612, 350};
+		
+		box_Top.setBounds(0, 0, dim[0], 60);
+		
+		welcomeText.setBounds(10,10,dim[0],80);
+		welcomeText.setBackground(new Color(250,250,250));
+		welcomeText.setWrapStyleWord(true);
+		welcomeText.setLineWrap(true);
+		welcomeText.setOpaque(false);
+		welcomeText.setEditable(false);
+		
+		console.setBounds(200, 60, (dim[0]*2/3)-20, 1000);
+		console.setBackground(new Color(200,200,200));
+		console.setWrapStyleWord(true);
+		console.setLineWrap(true);
+		//console.setEditable(false);
+		DefaultCaret caret = (DefaultCaret) console.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
+		box_Top.add(welcomeText);
+		box_L.setBounds(0, 60, dim[0]/3, dim[1]-60);
+		box_R.add(console);
+		box_R.setBounds(200, 60, (dim[0]*2/3)-20, 1000);
+		
+		for (int i=0; i < buttonNames.length; i++)
+		{
+			button[i] = createArrayButton(i,buttonNames[i]);
+			button[i].setBounds(2, 0+i*45, 190, 40);
+			button[i].setBackground(Color.WHITE);
+			box_L.add(button[i]);
+		}
+		
+		frame.setMinimumSize(new Dimension(dim[0], dim[1]));
+		frame.add(box_Top);
+		frame.add(box_L);
+		frame.add(box_R);
+		frame.getContentPane().setBackground(new Color(250,250,250));
+		frame.setTitle("TauBot MKI");
+		//frame.setLayout(null);
+		frame.setSize(dim[0],dim[1]);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	private JButton createArrayButton(final int i, String name) {
+        final JButton b = new JButton(name);
+        
+        b.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.launch(i);
+            }
+        });
+        return b;
+    }
+	
+	public void buttonEvent() {
+		Main.log("hello");
 	}
 	
 	public void setImage (BufferedImage image) {
@@ -34,19 +106,15 @@ public class Window
 	public void render() {
 		frame.getContentPane().setLayout(new FlowLayout());
 		frame.getContentPane().add(new JLabel(new ImageIcon(image)));
-		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	public void text(String text) {
-		Main.log("text = "+text);
-		label.setText(text);
-		frame.add(label);
-		frame.pack();
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		String oldText = console.getText();
+		console.append(text);
 	}
+	
 	
 	public void pixelColor(int x, int y)
 	{

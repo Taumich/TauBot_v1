@@ -31,7 +31,7 @@ public class InstaBot implements Bot
 		colScan = new Color(58, 58, 58);
 		Main.log("Window = "+c.colorCompare(colScan, c.getColor(500, 1)));
 		Main.log(colScan+" vs "+c.getColor(500, 1));
-		if(!c.colorCompare(colScan, c.getColor(500, 1))) {
+		if(!c.colorCompareMargin(colScan.getRGB(), c.getColor(500, 1).getRGB(), 5)) {
 			if(!fillWindow())
 				return false;
 		}
@@ -51,6 +51,7 @@ public class InstaBot implements Bot
 		for(int i=0; i < repeats; i++)
 			if (!postAction())
 				break;
+		Main.log("Post liked x"+repeats);
 		
 		message = "Instagram bot successfully completed";
 		return true;
@@ -58,14 +59,11 @@ public class InstaBot implements Bot
 	
 	private boolean postAction ()
 	{
-		Main.log("___Entered Post Action____");
 		c.mouseClick(MouseEvent.BUTTON1_DOWN_MASK, 2);
 		c.mouseMove((int) (400+100*Math.random()), (int) (450+100*Math.random()));
 		c.wait((int) (30+300*Math.random()) );
 		c.type(KeyEvent.VK_RIGHT);
 		c.wait((int) (500+1000*Math.random()) );
-		
-		Main.log(" Post Action Success");
 		return true;
 	}
 	
@@ -90,11 +88,11 @@ public class InstaBot implements Bot
 	private boolean fillWindow ()
 	{
 		Main.log("___Entered Fill Window____");
-		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 3)) {
+		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 5)) {
 			message = "Error: Searching for window:\n Did not find color in range";
 			return false;
 		}
-		int[] loc = c.colCompareRange(450, 3, 550, 500, colScan.getRGB(), 3);
+		int[] loc = c.colCompareRange(450, 3, 550, 500, colScan.getRGB(), 5);
 		c.mouseTo(loc[0], loc[1]);
 		c.wait(300);
 		c.mouseClick();

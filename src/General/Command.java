@@ -33,7 +33,6 @@ public class Command
 		//check screenRange
 		getMouseLoc();
 		bot.mouseMove(10000,10000);
-		bot.waitForIdle();
 		bot.delay(10);
 		screen[0] = MouseInfo.getPointerInfo().getLocation().getX();
 		screen[1] = MouseInfo.getPointerInfo().getLocation().getY();
@@ -88,10 +87,10 @@ public class Command
 	//One mouse button click
 	public String mouseClick (int input) {
 		bot.mousePress(input);
-		bot.waitForIdle();
+		bot.delay(10);
 		bot.delay(15+ (int)(50*Math.random()));
 		bot.mouseRelease(input);
-		bot.waitForIdle();
+		bot.delay(10);
 		bot.delay(15+ (int)(100*Math.random()));
 		
 		return "mouse clicked";
@@ -110,7 +109,7 @@ public class Command
 		bot.keyPress(specKey);
 		bot.delay(100+ (int)(100*Math.random()) );
 		bot.keyRelease(specKey);
-		bot.waitForIdle();
+		bot.delay(10);
 		return "Hit key: "+specKey;
 	}
 	
@@ -120,13 +119,13 @@ public class Command
 			bot.keyPress(specKey);
 			bot.keyRelease(specKey);
 			bot.keyRelease(KeyEvent.SHIFT_DOWN_MASK);
-			bot.waitForIdle();
+			bot.delay(10);
 		} else {
 			bot.keyPress(KeyEvent.CTRL_DOWN_MASK);
 			bot.keyPress(specKey);
 			bot.keyRelease(specKey);
 			bot.keyRelease(KeyEvent.CTRL_DOWN_MASK);
-			bot.waitForIdle();
+			bot.delay(10);
 		}
 		return "Hit key: "+specKey+" and shift="+shiftElseCtrl;
 	}
@@ -134,10 +133,10 @@ public class Command
 	//Clicks a special action key that cannot be sent as a character with a key release delay.
 	public String type (int specKey, int delay) {
 		bot.keyPress(specKey);
-		bot.waitForIdle();
+		bot.delay(10);
 		bot.delay(delay);
 		bot.keyRelease(specKey);
-		bot.waitForIdle();
+		bot.delay(10);
 		bot.delay(10);
 		return "Hit key: "+specKey;
 	}
@@ -148,10 +147,10 @@ public class Command
 		if (capital) bot.keyPress(KeyEvent.VK_SHIFT);
 		else letter = Character.toUpperCase(letter);
 		bot.keyPress(letter);
-		bot.waitForIdle();
+		bot.delay(10);
 		bot.delay((int) delay);
 		bot.keyRelease(letter);
-		bot.waitForIdle();
+		bot.delay(10);
 		bot.delay((int) delay);
 		if (capital) bot.keyRelease(KeyEvent.VK_SHIFT);
 		return "Typed: "+letter;
@@ -219,7 +218,7 @@ public class Command
 				diff[1] = target_loc[1] - mouseY;
 				
 			bot.mouseMove(mouseX, mouseY);
-			bot.waitForIdle();
+			bot.delay(10);
 			bot.delay(1000/120);
 			max++;
 			if(max > 1000 || diff[0] > screen[0] || diff[1] > screen[1])
@@ -241,7 +240,7 @@ public class Command
 		for (int i=0; i < 40 && (mouseX != target_loc[0] || mouseY != target_loc[1]); i++) {
 			bot.mouseMove(mouseX+ ( (mouseX==target_loc[0])? 0:diff[0]), mouseY+ ( (mouseY==target_loc[1])? 0:diff[1]));
 			getMouseLoc();
-			bot.waitForIdle();
+			bot.delay(10);
 			bot.delay(1000/120);
 		}//*/
 		return mouseX != x && mouseY != y;
@@ -301,7 +300,7 @@ public class Command
 		type(KeyEvent.VK_ENTER);
 		wait(2000);
 		type(KeyEvent.VK_TAB);
-		bot.waitForIdle();
+		bot.delay(10);
 		type(KeyEvent.VK_ENTER);
 		wait(500);
 		type(KeyEvent.VK_ENTER);
