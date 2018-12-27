@@ -9,17 +9,19 @@ public class InstaBot implements Bot
 	static Color colScan;
 	static int[] t = new int[2];
 	static Command c = null;
-	static String message = null;
+	static String message = "not initialized";
 	
 	public InstaBot(Command com) {
 		c = com;
 		message = "initialized";
 	}
 	
-	public static void target(int x, int y) {
+	private static void target(int x, int y) {
 		t[0] = x;
 		t[1] = y;
 	}
+	
+	public String getMessage() { return message; }
 	
 	public boolean bot(String hashtag, int repeats)
 	{
@@ -27,8 +29,9 @@ public class InstaBot implements Bot
 			return false;
 		
 		colScan = new Color(58, 58, 58);
-		Main.log("Window = "+c.colorCompare(colScan, c.getColor(500, 3)));
-		if(!c.colorCompare(colScan, c.getColor(500, 3))) {
+		Main.log("Window = "+c.colorCompare(colScan, c.getColor(500, 1)));
+		Main.log(colScan+" vs "+c.getColor(500, 1));
+		if(!c.colorCompare(colScan, c.getColor(500, 1))) {
 			if(!fillWindow())
 				return false;
 		}
@@ -49,6 +52,7 @@ public class InstaBot implements Bot
 			if (!postAction())
 				break;
 		
+		message = "Instagram bot successfully completed";
 		return true;
 	}
 	

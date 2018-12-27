@@ -58,14 +58,21 @@ public class Main
 		c.wait(1000);
 		c.mouseMove(res[0],res[1]);//*/
 		
+		Window win = new Window();
+		
 		switch(2)
 		{
-			case 0:	for (int i = 0; i < 10; i++)
-						log( c.pixelScan(2000, 1) );
-			case 1:	log( "gwBot completed = "+ gwbot.bot() ); //*/	
-			case 2: log( (instabot.bot("#warhammer40k", 1))? "Instabot success" : instabot.message);
+			case 0:	log( "idle test"); break;
+			case 1:	log( "gwBot completed = "+ gwbot.bot() ); break;//*/	
+			case 2:
+				instabot.bot("#warhammer40k", 1);
+				log( instabot.getMessage());
+				win.text(instabot.getMessage());
+				break;
 				//*/
 		}
+		
+		//win.render();
 	}
 	
 	public static void log(String message) { System.out.println(message); }

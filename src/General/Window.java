@@ -1,16 +1,25 @@
 package General;
 
+import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 public class Window
 {
 	JFrame frame;
+	JLabel label = new JLabel();
 	BufferedImage image;
+	
+	public Window ()
+	{
+		frame = new JFrame();
+		label = new JLabel();
+	}
 	
 	public Window (BufferedImage image)
 	{
@@ -25,6 +34,15 @@ public class Window
 	public void render() {
 		frame.getContentPane().setLayout(new FlowLayout());
 		frame.getContentPane().add(new JLabel(new ImageIcon(image)));
+		frame.pack();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public void text(String text) {
+		Main.log("text = "+text);
+		label.setText(text);
+		frame.add(label);
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
