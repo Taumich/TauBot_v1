@@ -51,16 +51,20 @@ public class InstaBot implements Bot
 	
 	private boolean postAction ()
 	{
+		Main.log("___Entered Post Action____");
 		c.mouseClick(MouseEvent.BUTTON1_DOWN_MASK, 2);
 		c.mouseMove((int) (400+100*Math.random()), (int) (450+100*Math.random()));
 		c.wait((int) (300+300*Math.random()) );
 		c.type(KeyEvent.VK_RIGHT);
 		c.wait((int) (1000+1000*Math.random()) );
+		
+		Main.log("___Exit Post Action____");
 		return true;
 	}
 	
 	private boolean openPosts ()
 	{
+		Main.log("___Entered Open Posts____");
 		c.mouseAct(1000, 500);
 		c.mouseAct(1000, 700);
 		
@@ -72,6 +76,7 @@ public class InstaBot implements Bot
 		c.mouseMove(500, 500);
 		c.mouseTo(500, 500);
 		
+		Main.log("___Exit Open Posts____");
 		return true;
 	}
 	
