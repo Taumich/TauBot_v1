@@ -89,14 +89,14 @@ public class Window
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.launch(i);
+                Taubot.launch(i);
             }
         });
         return b;
     }
 	
 	public void buttonEvent() {
-		Main.log("hello");
+		Taubot.log("hello");
 	}
 	
 	public void setImage (BufferedImage image) {

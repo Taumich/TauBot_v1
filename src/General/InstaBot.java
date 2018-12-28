@@ -9,10 +9,10 @@ public class InstaBot implements Bot
 	static Color colScan;
 	static int[] t = new int[2];
 	static Command c = null;
-	static String message = "not initialized";
+	static String message = "Message to return";
 	
-	public InstaBot(Command com) {
-		c = com;
+	public InstaBot() {
+		c = Taubot.getCommand();
 		message = "initialized";
 	}
 	
@@ -29,8 +29,8 @@ public class InstaBot implements Bot
 			return false;
 		
 		colScan = new Color(58, 58, 58);
-		Main.log("Window = "+c.colorCompare(colScan, c.getColor(500, 1)));
-		Main.log(colScan+" vs "+c.getColor(500, 1));
+		Taubot.log("Window = "+c.colorCompare(colScan, c.getColor(500, 1)));
+		Taubot.log(colScan+" vs "+c.getColor(500, 1));
 		if(!c.colorCompareMargin(colScan.getRGB(), c.getColor(500, 1).getRGB(), 5)) {
 			if(!fillWindow())
 				return false;
@@ -51,7 +51,7 @@ public class InstaBot implements Bot
 		for(int i=0; i < repeats; i++)
 			if (!postAction())
 				break;
-		Main.log("Post liked x"+repeats);
+		Taubot.log("Post liked x"+repeats);
 		
 		message = "Instagram bot successfully completed";
 		return true;
@@ -69,7 +69,7 @@ public class InstaBot implements Bot
 	
 	private boolean openPosts ()
 	{
-		Main.log("___Entered Open Posts____");
+		Taubot.log("___Entered Open Posts____");
 		c.mouseAct(1000, 500);
 		c.mouseAct(1000, 700);
 		
@@ -81,13 +81,13 @@ public class InstaBot implements Bot
 		c.mouseMove(500, 500);
 		c.mouseTo(500, 500);
 		
-		Main.log(" Open Post Success");
+		Taubot.log(" Open Post Success");
 		return true;
 	}
 	
 	private boolean fillWindow ()
 	{
-		Main.log("___Entered Fill Window____");
+		Taubot.log("___Entered Fill Window____");
 		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 5)) {
 			message = "Error: Searching for window:\n Did not find color in range";
 			return false;
@@ -98,13 +98,13 @@ public class InstaBot implements Bot
 		c.mouseClick();
 		c.wait(300);
 		c.mouseClick();
-		Main.log(" Fill Window Success");
+		Taubot.log(" Fill Window Success");
 		return true;
 	}
 	
 	private boolean instaSearch (String searchText)
 	{
-		Main.log("___Entered insta search____");
+		Taubot.log("___Entered insta search____");
 		// First check if  finding the white area in instagram header
 		colScan = new Color(255, 255, 255);
 		if (!c.colCompRangeCheck(100, 20, 101, 500, colScan.getRGB(), 1)) {
@@ -139,7 +139,7 @@ public class InstaBot implements Bot
 		c.wait(300);
 		c.type(KeyEvent.VK_ENTER);
 		
-		Main.log(" Insta Search Success");
+		Taubot.log(" Insta Search Success");
 		return true;
 	}
 }

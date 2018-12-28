@@ -9,9 +9,10 @@ public class GWBot implements Bot
 	static Color colScan;
 	static int[] t = new int[2];
 	static Command c = null;
+	static String message = "Message to return";
 	
-	public GWBot(Command com) {
-		c = com;
+	public GWBot() {
+		c = Taubot.getCommand();
 	}
 	
 	public static void target(int x, int y) {
