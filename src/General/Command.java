@@ -287,13 +287,13 @@ public class Command
 	public boolean openWebApp (String appName) {
 		if (!openApp("Google Chrome"))	return false;
 		wait(2000);
-		if (!colCompRangeCheck (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2)) {
+		if (!colCompRangeCheck (320, 300, 720, 700, new Color(241, 243, 244).getRGB(), 2)) {
 			wait(2000);
-			if (!colCompRangeCheck (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2))
+			if (!colCompRangeCheck (320, 300, 720, 700, new Color(241, 243, 244).getRGB(), 2))
 				return false;
 		}
 		
-		int loc[] = colCompareRange (300, 300, 700, 700, new Color(241, 243, 244).getRGB(), 2);
+		int loc[] = colCompareRange (320, 300, 720, 700, new Color(241, 243, 244).getRGB(), 2);
 		mouseAct(loc[0], loc[1]+3);
 		paste(appName);
 		wait(500);

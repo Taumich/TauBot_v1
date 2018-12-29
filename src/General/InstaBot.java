@@ -48,9 +48,12 @@ public class InstaBot implements Bot
 		
 		c.wait((int) (500+300*Math.random()) );
 		
+		colScan = new Color(125, 125, 125);
 		for(int i=0; i < repeats; i++)
-			if (!postAction())
-				break;
+			if (!postAction()) {
+				message += " after liking "+i+" posts";
+				return false;
+			}
 		Taubot.log("Post liked x"+repeats);
 		
 		message = "Instagram bot successfully completed";
@@ -59,11 +62,16 @@ public class InstaBot implements Bot
 	
 	private boolean postAction ()
 	{
+		c.wait((int) (500+1000*Math.random()) );
+		if (!c.colorCompareMargin(colScan.getRGB(), c.getColor(125, 500).getRGB(), 5))
+		{
+			message = "Post not identified";
+			return false;
+		}
 		c.mouseClick(MouseEvent.BUTTON1_DOWN_MASK, 2);
 		c.mouseMove((int) (400+100*Math.random()), (int) (450+100*Math.random()));
 		c.wait((int) (30+300*Math.random()) );
 		c.type(KeyEvent.VK_RIGHT);
-		c.wait((int) (500+1000*Math.random()) );
 		return true;
 	}
 	
