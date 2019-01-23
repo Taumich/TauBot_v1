@@ -34,7 +34,7 @@ public class Window
 	
 	public void start()
 	{
-		String[] buttonNames = {"Idle Test","GW-Launcher","Insta W40k Liker 30","Insta W40k Liker 100","Insta Blender Liker 100"};
+		String[] buttonNames = {"Idle Test","GW-Launcher","Insta W40k Liker 30","Insta W40k Liker 100","Insta Blender Liker 100", "Insta Both Liker 100"};
 		JTextArea 	welcomeText = new JTextArea("Welcome! \nI am TauBot MKI. This is my interface with you.\nHere are some available commands:");
 		button = new JButton[buttonNames.length];
 		

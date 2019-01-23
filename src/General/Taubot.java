@@ -50,6 +50,11 @@ public class Taubot
 				instabot.bot("#blender3d", 100);
 				log( instabot.getMessage());
 				break;
+			case 5:
+				instabot.bot("#warhammer40k", 100);
+				log( instabot.getMessage());
+				instabot.bot("#blender3d", 100);
+				log( instabot.getMessage());
 		}
 	}
 	
