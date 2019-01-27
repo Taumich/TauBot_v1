@@ -53,7 +53,7 @@ public class Window
 		welcomeText.setEditable(false);
 		
 		//Setup tag modifier:
-		modifier.setBounds(2,75,190,26);
+		modifier.setBounds(2,75,190,33);
 		modifier.setBackground(new Color(200,200,200));
 		modifier.setWrapStyleWord(true);
 		modifier.setLineWrap(true);
@@ -86,7 +86,7 @@ public class Window
 		for (int i=0; i < buttonNames.length; i++)
 		{
 			button[i] = createArrayButton(i,buttonNames[i]);
-			button[i].setBounds(2, 45+i*45, 190, 40);
+			button[i].setBounds(2, 55+i*45, 190, 40);
 			button[i].setBackground(Color.WHITE);
 			box_L.add(button[i]);
 		}
