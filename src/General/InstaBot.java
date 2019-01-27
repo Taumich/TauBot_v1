@@ -23,7 +23,33 @@ public class InstaBot implements Bot
 	
 	public String getMessage() { return message; }
 	
+	public boolean bot(String[] hashtag, int repeats)
+	{
+		if (!botInitialWork())
+			return false;
+		
+		for (String htag : hashtag)
+		{
+			if (!botTagWork(htag, repeats))
+				return false;
+		}
+		message = "Instagram bot successfully completed";
+		return true;
+	}
+	
 	public boolean bot(String hashtag, int repeats)
+	{
+		if (!botInitialWork())
+			return false;
+		
+		if (!botTagWork(hashtag, repeats))
+				return false;
+		
+		message = "Instagram bot successfully completed";
+		return true;
+	}
+	
+	private boolean botInitialWork ()
 	{
 		if(!c.openWebApp("Instagram") )
 			return false;
@@ -35,10 +61,14 @@ public class InstaBot implements Bot
 			if(!fillWindow())
 				return false;
 		}
-			
-		c.wait(2000);
 		
-		if(!instaSearch(hashtag))
+		c.wait(2000);
+		return true;
+	}
+	
+	private boolean botTagWork(String htag, int repeats)
+	{
+		if(!instaSearch(htag))
 			return false;
 		
 		c.wait(3000);
@@ -54,9 +84,10 @@ public class InstaBot implements Bot
 				message += " after liking "+i+" posts";
 				return false;
 			}
-		Taubot.log("Post liked x"+repeats);
+		Taubot.log("Post in "+htag+" liked x"+repeats);
+		if(!postReset())
+			return false;
 		
-		message = "Instagram bot successfully completed";
 		return true;
 	}
 	
@@ -72,6 +103,16 @@ public class InstaBot implements Bot
 		c.mouseMove((int) (400+100*Math.random()), (int) (450+100*Math.random()));
 		c.wait((int) (30+300*Math.random()) );
 		c.type(KeyEvent.VK_RIGHT);
+		return true;
+	}
+	
+	private boolean postReset ()
+	{
+		Taubot.log("___Entered Post Reset____");
+		c.type(KeyEvent.VK_ESCAPE);
+		c.wait(300);
+		c.type(KeyEvent.VK_PAGE_UP, 800);
+		Taubot.log(" Post Reset Success");
 		return true;
 	}
 	

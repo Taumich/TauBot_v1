@@ -17,12 +17,13 @@ import javax.swing.text.DefaultCaret;
 
 public class Window
 {
-	JFrame frame = new JFrame();
-	JTextArea console = new JTextArea("Console log:");
-	Container box_Top = new Container();
-	Container box_L = new Container();
-	Container box_R = new Container();
-	JButton[] button;
+	JFrame 		frame 	 = new JFrame();
+	JTextArea 	console  = new JTextArea("Console log:"),
+				modifier = new JTextArea("#warhammer40k,100,#blender3D,20");
+	Container 	box_Top  = new Container(),
+				box_L 	 = new Container(),
+				box_R 	 = new Container();
+	JButton[] 	button;
 	BufferedImage image;
 	
 	public Window () {}
@@ -34,14 +35,16 @@ public class Window
 	
 	public void start()
 	{
-		String[] buttonNames = {"Idle Test","GW-Launcher","Insta W40k Liker 30","Insta W40k Liker 100","Insta Blender Liker 100", "Insta Both Liker 100"};
-		JTextArea 	welcomeText = new JTextArea("Welcome! \nI am TauBot MKI. This is my interface with you.\nHere are some available commands:");
+		String[] buttonNames = {"Insta Modifier Liker","GW-Launcher","Insta W40k Liker 30","Insta W40k Liker 100","Insta Blender Liker 100"};
+		JTextArea 	welcomeText = new JTextArea("Welcome! \nI am TauBot MKI. This is my interface with you. Here are some available commands:");
+		JTextArea 	modTitle = new JTextArea("Command Modifier:");
 		button = new JButton[buttonNames.length];
 		
 		int dim[] = {612, 350};
 		
 		box_Top.setBounds(0, 0, dim[0], 60);
 		
+		//Setup welcome text:
 		welcomeText.setBounds(10,10,dim[0],80);
 		welcomeText.setBackground(new Color(250,250,250));
 		welcomeText.setWrapStyleWord(true);
@@ -49,6 +52,20 @@ public class Window
 		welcomeText.setOpaque(false);
 		welcomeText.setEditable(false);
 		
+		//Setup tag modifier:
+		modifier.setBounds(2,75,190,26);
+		modifier.setBackground(new Color(200,200,200));
+		modifier.setWrapStyleWord(true);
+		modifier.setLineWrap(true);
+		modifier.setEditable(true);
+		
+		//Setup Tag Modifier Title:
+		modTitle.setBounds(2,60,190,30);
+		modTitle.setBackground(new Color(250,250,250));
+		modTitle.setWrapStyleWord(true);
+		modTitle.setEditable(false);
+		
+		//Setup Console:
 		console.setBounds(200, 60, (dim[0]*2/3)-20, 1000);
 		console.setBackground(new Color(200,200,200));
 		console.setWrapStyleWord(true);
@@ -57,15 +74,19 @@ public class Window
 		DefaultCaret caret = (DefaultCaret) console.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		
+		//Tiling boxes alignment
 		box_Top.add(welcomeText);
+		box_R.add(modifier);
+		box_R.add(modTitle);
 		box_L.setBounds(0, 60, dim[0]/3, dim[1]-60);
 		box_R.add(console);
 		box_R.setBounds(200, 60, (dim[0]*2/3)-20, 1000);
 		
+		//Button array production
 		for (int i=0; i < buttonNames.length; i++)
 		{
 			button[i] = createArrayButton(i,buttonNames[i]);
-			button[i].setBounds(2, 0+i*45, 190, 40);
+			button[i].setBounds(2, 45+i*45, 190, 40);
 			button[i].setBackground(Color.WHITE);
 			box_L.add(button[i]);
 		}
@@ -132,5 +153,9 @@ public class Window
 	
 	public int imageResolution(boolean height) {
 		return (height)? image.getHeight() : image.getWidth();
+	}
+	
+	public String getModifier () {
+		return modifier.getText();
 	}
 }
