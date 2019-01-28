@@ -38,20 +38,11 @@ public class Taubot
 		{
 			case 0:
 				instabot.bot(win.getModifier().replaceAll(" ","").split(","));
-				/*String[] tagList = win.getModifier().replaceAll(" ","").split(",");
-				if (tagList.length==1)
-					instabot.bot(tagList[0], 5);
-				else if (tagList.length==2)
-					instabot.bot(tagList[0], Integer.parseInt(tagList[1]));
-				else
-					for(int j=0; j < tagList.length; j++)
-						if(Character.digit(tagList[j+1].charAt(0),10) < 0)
-							instabot.bot(tagList[j++], Integer.parseInt(tagList[j]));
-						else
-							instabot.bot(tagList[j++], 100);*/
 				log( instabot.getMessage());
 				break;
-			case 1:	log( "gwBot completed = "+ gwbot.bot() ); break;//*/	
+			case 1:
+				log( "gwBot completed = "+ gwbot.bot() );
+				break;//*/	
 			case 2:
 				instabot.bot("#warhammer40k", 30);
 				log( instabot.getMessage());
