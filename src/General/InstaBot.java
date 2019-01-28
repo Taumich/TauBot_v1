@@ -30,12 +30,10 @@ public class InstaBot implements Bot
 		
 		for (int i=0; i < input.length; i++)
 		{
-			if(Character.isDigit(input[i+1].charAt(0))) {
-				if (!botTagWork(input[i], Integer.parseInt(input[++i])))
-					return false;
+			if(!(i==input.length-1) && Character.isDigit(input[i+1].charAt(0))) {
+				botTagWork(input[i], Integer.parseInt(input[++i]));
 			} else {
-				if (!botTagWork(input[i], 100))
-					return false;
+				botTagWork(input[i], 100);
 			}
 		}
 		message = "Instagram bot successfully completed";
