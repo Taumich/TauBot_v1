@@ -23,15 +23,20 @@ public class InstaBot implements Bot
 	
 	public String getMessage() { return message; }
 	
-	public boolean bot(String[] hashtag, int repeats)
+	public boolean bot(String[] input)
 	{
 		if (!botInitialWork())
 			return false;
 		
-		for (String htag : hashtag)
+		for (int i=0; i < input.length; i++)
 		{
-			if (!botTagWork(htag, repeats))
-				return false;
+			if(Character.isDigit(input[i+1].charAt(0))) {
+				if (!botTagWork(input[i], Integer.parseInt(input[++i])))
+					return false;
+			} else {
+				if (!botTagWork(input[i], 100))
+					return false;
+			}
 		}
 		message = "Instagram bot successfully completed";
 		return true;

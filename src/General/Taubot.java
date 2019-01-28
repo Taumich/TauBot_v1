@@ -37,7 +37,8 @@ public class Taubot
 		switch(i)
 		{
 			case 0:
-				String[] tagList = win.getModifier().replaceAll(" ","").split(",");
+				instabot.bot(win.getModifier().replaceAll(" ","").split(","));
+				/*String[] tagList = win.getModifier().replaceAll(" ","").split(",");
 				if (tagList.length==1)
 					instabot.bot(tagList[0], 5);
 				else if (tagList.length==2)
@@ -47,7 +48,7 @@ public class Taubot
 						if(Character.digit(tagList[j+1].charAt(0),10) < 0)
 							instabot.bot(tagList[j++], Integer.parseInt(tagList[j]));
 						else
-							instabot.bot(tagList[j++], 100);
+							instabot.bot(tagList[j++], 100);*/
 				log( instabot.getMessage());
 				break;
 			case 1:	log( "gwBot completed = "+ gwbot.bot() ); break;//*/	
