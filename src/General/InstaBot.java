@@ -114,7 +114,11 @@ public class InstaBot implements Bot
 		Taubot.log("___Entered Post Reset____");
 		c.type(KeyEvent.VK_ESCAPE);
 		c.wait(300);
-		c.type(KeyEvent.VK_PAGE_UP, 800);
+		c.type(KeyEvent.VK_PAGE_UP, 700);
+		c.wait(300);
+		c.type(KeyEvent.VK_PAGE_UP, 700);
+		c.wait(300);
+		c.type(KeyEvent.VK_PAGE_UP, 700);
 		Taubot.log(" Post Reset Success");
 		return true;
 	}
