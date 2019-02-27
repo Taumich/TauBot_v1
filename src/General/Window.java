@@ -19,7 +19,7 @@ public class Window
 {
 	JFrame 		frame 	 = new JFrame();
 	JTextArea 	console  = new JTextArea("Console log:"),
-				modifier = new JTextArea("#warhammer40k,100,#blender3D,20");
+				modifier = new JTextArea("#warhammer40k,#blender3D,#3dmodeling,#w40k,#b3d,#cyberpunk,#gothic");
 	Container 	box_Top  = new Container(),
 				box_L 	 = new Container(),
 				box_R 	 = new Container();
