@@ -56,13 +56,17 @@ public class InstaBot implements Bot
 	{
 		if(!c.openWebApp("Instagram") )
 			return false;
-		
+		message = "fill window attempt failed";
 		colScan = new Color(58, 58, 58);
 		Taubot.log("Window = "+c.colorCompare(colScan, c.getColor(500, 1)));
 		Taubot.log(colScan+" vs "+c.getColor(500, 1));
 		if(!c.colorCompareMargin(colScan.getRGB(), c.getColor(500, 1).getRGB(), 5)) {
-			if(!fillWindow())
-				return false;
+			colScan = new Color(0, 0, 0);
+			if(!c.colorCompareMargin(colScan.getRGB(), c.getColor(500, 1).getRGB(), 2)) {
+				message = "second fill window attempt failed";
+				if(!fillWindow())
+					return false;
+			}
 		}
 		
 		c.wait(2000);
@@ -83,7 +87,7 @@ public class InstaBot implements Bot
 		
 		colScan = new Color(125, 125, 125);
 		for(int i=0; i < repeats; i++)
-			if (!postAction()) {
+			if (!postAction() && caseCancel()) {
 				message += " after liking "+i+" posts";
 				return false;
 			}
@@ -125,6 +129,9 @@ public class InstaBot implements Bot
 	
 	private boolean openPosts ()
 	{
+		if (caseCancel())
+			return false;
+		
 		Taubot.log("___Entered Open Posts____");
 		c.mouseAct(1000, 500);
 		c.mouseAct(1000, 700);
@@ -133,6 +140,9 @@ public class InstaBot implements Bot
 		c.mouseTo(300, 500);
 		c.mouseClick();
 		c.wait(1000);
+		
+		if (caseCancel())
+			return false;
 		
 		c.mouseMove(500, 500);
 		c.mouseTo(500, 500);
@@ -143,16 +153,18 @@ public class InstaBot implements Bot
 	
 	private boolean fillWindow ()
 	{
+		if (caseCancel())
+			return false;
 		Taubot.log("___Entered Fill Window____");
-		if (!c.colCompRangeCheck(450, 3, 550, 500, colScan.getRGB(), 5)) {
+		if (!c.colCompRangeCheck(500, 3, 550, 700, colScan.getRGB(), 5)) {
 			message = "Error: Searching for window:\n Did not find color in range";
 			return false;
 		}
-		int[] loc = c.colCompareRange(450, 3, 550, 500, colScan.getRGB(), 5);
-		c.mouseTo(loc[0], loc[1]);
+		int [] loc = c.colCompareRange(500, 3, 550, 500, colScan.getRGB(), 5);
+		c.mouseTo(loc[0], loc[1]+15);
 		c.wait(300);
 		c.mouseClick();
-		c.wait(300);
+		c.wait(200);
 		c.mouseClick();
 		Taubot.log(" Fill Window Success");
 		return true;
@@ -160,6 +172,8 @@ public class InstaBot implements Bot
 	
 	private boolean instaSearch (String searchText)
 	{
+		if (caseCancel())
+			return false;
 		Taubot.log("___Entered insta search____");
 		// First check if  finding the white area in instagram header
 		colScan = new Color(255, 255, 255);
@@ -171,6 +185,8 @@ public class InstaBot implements Bot
 		c.mouseMove(loc[0], loc[1]);
 		
 		c.wait(500);
+		if (caseCancel())
+			return false;
 		
 		//then check if finding the end of the white are in instagram header
 		colScan = new Color(250, 250, 250);
@@ -189,6 +205,8 @@ public class InstaBot implements Bot
 		c.paste(searchText);
 		
 		c.wait(300);
+		if (caseCancel())
+			return false;
 		c.type(KeyEvent.VK_ENTER);
 		c.wait(300);
 		c.type(KeyEvent.VK_ENTER);
@@ -197,5 +215,18 @@ public class InstaBot implements Bot
 		
 		Taubot.log(" Insta Search Success");
 		return true;
+	}
+	
+	private boolean caseCancel ()
+	{
+		if(	c.colorCompare(c.getColor(900, 900), 0, 0, 0, 1) &&
+			c.colorCompare(c.getColor(50, 700), 0, 0, 0, 1) &&
+			c.colorCompare(c.getColor(800, 100), 0, 0, 0, 1))
+		{
+			Taubot.log("Case Canceled");
+			message = "Case Canceled";
+			return true;
+		}
+		return false;
 	}
 }
